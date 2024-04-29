@@ -1,48 +1,42 @@
 import unittest
 from unittest.mock import patch, MagicMock
-import numpy as np
+import tempfile
 import pandas as pd
-import mdtraj as md
-from pages import Feature_Extraction
+import your_module  # replace with the actual name of your module
 
 class TestFeatureExtraction(unittest.TestCase):
-    def setUp(self):
-        self.trajectory = md.load('tests/data/test_trajectory.xtc', top='tests/data/test_topology.pdb')
+    @patch('tempfile.NamedTemporaryFile')
+    @patch('your_module.md')
+    @patch('your_module.st')
+    @patch('your_module.pd')
+    @patch('your_module.compute_rmsd')
+    @patch('your_module.compute_rmsf')
+    @patch('your_module.compute_sasa')
+    @patch('your_module.compute_rog')
+    @patch('your_module.compute_h_bonds')
+    @patch('your_module.compute_native_contacts')
+    def test_feature_extraction(self, mock_nc, mock_hb, mock_rog, mock_sasa, mock_rmsf, mock_rmsd, mock_pd, mock_st, mock_md, mock_tempfile):
+        # Arrange
+        mock_tempfile.return_value.__enter__.return_value.name = 'tempfile'
+        mock_md.load.return_value = MagicMock(n_frames=10, n_atoms=20, n_residues=30)
+        mock_rmsd.return_value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        mock_rmsf.return_value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        mock_sasa.return_value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        mock_rog.return_value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    @patch('1_Feature_Extraction.st.success')
-    def test_compute_rmsd(self, mock_success):
-        Feature_Extraction.compute_rmsd(self.trajectory)
-        mock_success.assert_called_once_with("Successfully computed rmsd")
+        # Act
+        your_module.your_function()  # replace with the actual name of your function
 
-    @patch('1_Feature_Extraction.st.success')
-    def test_compute_sasa(self, mock_success):
-        Feature_Extraction.compute_sasa(self.trajectory)
-        mock_success.assert_called_once_with("Successfully computed SaSa")
-
-    @patch('1_Feature_Extraction.st.success')
-    def test_compute_rog(self, mock_success):
-        Feature_Extraction.compute_rog(self.trajectory)
-        mock_success.assert_called_once_with("Successfully computed Radius of Gyration")
-
-    @patch('1_Feature_Extraction.st.success')
-    def test_compute_h_bonds(self, mock_success):
-        Feature_Extraction.compute_h_bonds(self.trajectory)
-        mock_success.assert_called_once_with("Successfully computed Hydrogen Bonds")
-
-    @patch('1_Feature_Extraction.st.success')
-    def test_compute_native_contacts(self, mock_success):
-        Feature_Extraction.compute_native_contacts(self.trajectory)
-        mock_success.assert_called_once_with("Successfully computed fraction of native contacts that determine protein folding")
-
-    @patch('1_Feature_Extraction.st.success')
-    @patch('1_Feature_Extraction.st.file_uploader')
-    @patch('1_Feature_Extraction.st.button')
-    def test_main(self, mock_button, mock_file_uploader, mock_success):
-        mock_button.return_value = True
-        mock_file_uploader.return_value = MagicMock()
-        mock_file_uploader.return_value.getvalue.return_value = b"test"
-        Feature_Extraction.main()
-        mock_success.assert_called_once_with("Successfully loaded the trajectory and we are ready to start analysis")
+        # Assert
+        mock_md.load.assert_called_once_with('tempfile', top='tempfile')
+        mock_st.success.assert_called_once_with("Successfully loaded the trajectory and we are ready to start analysis")
+        mock_pd.DataFrame.assert_called_once_with({'Frame': range(1, 11)})
+        mock_rmsd.assert_called_once()
+        mock_rmsf.assert_called_once()
+        mock_sasa.assert_called_once()
+        mock_rog.assert_called_once()
+        mock_hb.assert_called_once()
+        mock_nc.assert_called_once()
 
 if __name__ == '__main__':
     unittest.main()

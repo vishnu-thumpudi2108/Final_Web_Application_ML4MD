@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from time import time
 import streamlit as st
+from scipy import stats
 from numpy import percentile
 from pyod.models.ecod import ECOD
 from pyod.models.abod import ABOD 
@@ -136,26 +137,67 @@ def detect_outliers(data,outliers_fraction=0.01):
     st.success("Successfully detected outliers")
     return fin_df
 
+def detect_Outliers(data,outliers_fraction=0.01):
+    data = data.values.reshape(-1, 1)
+    de = detect_ecod(data,outliers_fraction=0.01)
+    da = detect_abod(data,outliers_fraction=0.01)
+    dh = detect_hbos(data,outliers_fraction=0.01)
+    dk = detect_knn(data,outliers_fraction=0.01)
+    dl = detect_lof(data,outliers_fraction=0.01)
+    dm = detect_mcd(data,outliers_fraction=0.01)
+    do = detect_ocsvm(data,outliers_fraction=0.01)
+    dp = detect_pca(data,outliers_fraction=0.01)
+    dl = detect_lmdd(data,outliers_fraction=0.01)
+    db = detect_dbscan(data)
+    # dz = detect_zscore(data)
+    # di = detect_IQR(data)
+    fin_df = pd.DataFrame({'ECOD':de,'ABOD':da,'HBOS':dh,'KNN':dk,'LOF':dl,'MCD':dm,'OCSVM':do,'PCA':dp,'LMDD':dl,'DBSCAN':db})
+    return fin_df
+
 def main():
     st.set_page_config(page_title="Outlier Detection Tool ",page_icon="chart_with_upwards_trend",layout="wide")
     st.markdown("# Welcome To Our Outlier Detection web page🎈")
     st.divider()
     csv_file = st.file_uploader("Upload your CSV file", type=["csv"])
-    number = st.number_input("Enter the outlier fraction", min_value=0.0, max_value=1.0, step=0.1, placeholder="Type a number...")
+    number = st.number_input("Enter the outlier fraction", min_value=0.0, max_value=1.0, step=0.01, placeholder="Type a number...")
+    first_col = st.checkbox("Ignore First Column in your CSV file")
+    f_b_f = st.checkbox("Compute Outliers Feature By Feature")
+    g_o_d = st.checkbox("Compute Outliers Globally")
     button = st.button("Process")
     if button:
+        if f_b_f and g_o_d:
+            st.warning("Please select only one option from the above",icon="⚠️")
+            st.stop();
         if csv_file:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_csv:
                 tmp_csv.write(csv_file.getvalue())
                 csv_path = tmp_csv.name
-            data_frame = pd.read_csv(csv_path)
-            df = data_frame.iloc[:,1:]
-            st.success("Successfully loaded the CSV file and we are ready to detect outliers")
-            fitting_classifiers(number)  
-            fin_df = detect_outliers(df,number) 
-            fin_df
-            st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
+            if g_o_d:
+                if first_col:
+                    data_frame = pd.read_csv(csv_path)
+                    df = data_frame.iloc[:,1:]
+                    st.success("Successfully loaded the CSV file and we are ready to detect outliers")
+                    fitting_classifiers(number)  
+                    fin_df = detect_outliers(df,number) 
+                    fin_df
+                    st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
+                    st.stop()
+                data_frame = pd.read_csv(csv_path)
+                st.success("Successfully loaded the CSV file and we are ready to detect outliers")
+                fitting_classifiers(number)  
+                fin_df = detect_outliers(data_frame,number) 
+                fin_df
+                st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
 
+            if f_b_f:
+                if first_col:
+                    data_frame = pd.read_csv(csv_path)
+                    df = data_frame.iloc[:,1:]
+                    for col in df.keys():
+                        data = df[col]
+                        fin_df = detect_Outliers(data,number)
+                        st.write("Outliers from column",col)
+                        fin_df
 
 if __name__ == '__main__':
     main()

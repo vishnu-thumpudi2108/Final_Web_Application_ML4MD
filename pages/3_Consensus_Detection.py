@@ -29,8 +29,12 @@ def main():
                 if(row_sums >= consensus_threshold):
                     count+=1
                     frames_list.append(i)
-            st.write(f"Number of frames that are outliers in the trajectory are : {count}")
-            st.write(f"Frames that are outliers in the trajectory are : {frames_list}")
+            if frames_list == []:
+                st.write("No Outliers detected in the trajectory")
+                st.stop()
+            else:
+                st.write(f"Number of frames that are outliers in the trajectory are : {count}")
+                st.write(f"Frames that are outliers in the trajectory are : {frames_list}")
         
 if __name__ == '__main__':
     main()

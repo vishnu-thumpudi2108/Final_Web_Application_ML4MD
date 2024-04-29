@@ -127,6 +127,10 @@ def compute_native_contacts(trajectory):
     st.success("Successfully computed fraction of native contacts that determine protein folding")
     st.write("Fraction of native contacts determing native folding mechanism in the trajectory are : %d" % len(native))
 
+def get_file_type(filename):
+    _,file_extension = os.path.splitext(filename)
+    return file_extension.lower()
+
 def main():
     st.set_page_config(page_title="Tool for Analysis of MD Data",page_icon="chart_with_upwards_trend",layout="wide")
     st.markdown("# Welcome To Our Feature Extraction web page🎈")
@@ -146,21 +150,40 @@ def main():
 
     if sasa_box:
         st.warning("Computing SASA takes longer time than expected", icon="⚠️")
+
     if button:
         if xtc_file and pdb_file:
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".xtc") as tmp_xtc:
-                tmp_xtc.write(xtc_file.getvalue())
-                xtc_path = tmp_xtc.name
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp_pdb:
-                tmp_pdb.write(pdb_file.getvalue())
-                pdb_path = tmp_pdb.name
+            st.success("Successfully uploaded the trajectory and the PDB file")
+            xtc_ext = get_file_type(xtc_file.name)
+            pdb_ext = get_file_type(pdb_file.name)
+            if xtc_ext == ".xtc" and pdb_ext == ".pdb":
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".xtc") as tmp_xtc:
+                    tmp_xtc.write(xtc_file.getvalue())
+                    xtc_path = tmp_xtc.name
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp_pdb:
+                    tmp_pdb.write(pdb_file.getvalue())
+                    pdb_path = tmp_pdb.name
+            if xtc_ext == ".trr" and pdb_ext == ".pdb":
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".trr") as tmp_xtc:
+                    tmp_xtc.write(xtc_file.getvalue())
+                    xtc_path = tmp_xtc.name
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp_pdb:
+                    tmp_pdb.write(pdb_file.getvalue())
+                    pdb_path = tmp_pdb.name
+            if xtc_ext == ".dcd" and pdb_ext == ".pdb":
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".dcd") as tmp_xtc:
+                    tmp_xtc.write(xtc_file.getvalue())
+                    xtc_path = tmp_xtc.name
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".pdb") as tmp_pdb:
+                    tmp_pdb.write(pdb_file.getvalue())
+                    pdb_path = tmp_pdb.name
             with st.spinner('Wait a while...'):
                 trajectory = md.load(xtc_path,top=pdb_path)
                 st.success("Successfully loaded the trajectory and we are ready to start analysis")
                 st.write(f"Number of frames: {trajectory.n_frames}")
                 st.write(f"Number of atoms: {trajectory.n_atoms}")
                 st.write(f"Number of residues: {trajectory.n_residues}")
-            df = pd.DataFrame({'Frames': range(1, trajectory.n_frames+1)})
+            df = pd.DataFrame({'Frame': range(1, trajectory.n_frames+1)})
             if rmsd_box:
                 rmsd = compute_rmsd(trajectory)
                 df['RMSD'] = rmsd

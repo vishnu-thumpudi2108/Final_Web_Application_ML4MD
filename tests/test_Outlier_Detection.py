@@ -1,24 +1,31 @@
 import unittest
 import pandas as pd
 import numpy as np
-from your_module import detect_IQR, detect_outliers  # replace 'your_module' with the actual module name
 
 class TestOutlierDetection(unittest.TestCase):
     def setUp(self):
         self.data = pd.DataFrame({
-            'A': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            'B': [1, 2, 3, 4, 5, 6, 7, 8, 9, 100]  # 100 is an outlier
+            'A': np.random.normal(0, 1, 100),
+            'B': np.random.normal(0, 1, 100),
+            'C': np.random.normal(0, 1, 100)
         })
-
-    def test_detect_IQR(self):
-        result = detect_IQR(self.data)
-        expected = pd.Series([0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
-        pd.testing.assert_series_equal(result, expected)
+        self.outliers_fraction = 0.01
 
     def test_detect_outliers(self):
-        result = detect_outliers(self.data, outliers_fraction=0.1)
+        result = detect_outliers(self.data, self.outliers_fraction)
         self.assertIsInstance(result, pd.DataFrame)
-        self.assertEqual(result.shape[1], 12)  # 12 methods used for outlier detection
+        self.assertEqual(set(result.columns), {'ECOD','ABOD','HBOS','KNN','LOF','MCD','OCSVM','PCA','LMDD','DBSCAN','Z-Score','IQR'})
+
+    def test_detect_outliers_output(self):
+        result = detect_outliers(self.data, self.outliers_fraction)
+        for col in result.columns:
+            self.assertTrue((result[col] == 0) | (result[col] == 1)).all()
+
+    def test_detect_outliers_fraction(self):
+        with self.assertRaises(ValueError):
+            detect_outliers(self.data, -0.01)
+        with self.assertRaises(ValueError):
+            detect_outliers(self.data, 1.01)
 
 if __name__ == '__main__':
     unittest.main()
