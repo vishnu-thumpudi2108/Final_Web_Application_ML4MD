@@ -136,7 +136,7 @@ def main():
     st.markdown("# Welcome To Our Feature Extraction web page🎈")
     st.divider()
     xtc_file = st.file_uploader("Upload your Trajectory file", type=["xtc","trr","dcd"])
-    pdb_file = st.file_uploader("Upload your PDB file", type=["pdb","psf"])
+    pdb_file = st.file_uploader("Upload your PDB file", type=["pdb"])
     rmsd_box = st.checkbox("Compute Root Mean Square Deviation")
     rmsf_box = st.checkbox("Compute Root Mean Square Fluctuation")
     sasa_box = st.checkbox("Compute Solvent Accessible Surface Area")
