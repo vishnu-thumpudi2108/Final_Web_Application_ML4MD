@@ -120,6 +120,17 @@ def detect_IQR(data):
     is_outlier = ((data < (Q1 - 1.5 * IQR)) | (data > (Q3 + 1.5 * IQR))).any(axis=1).astype(int)
     return is_outlier.astype(int)
 
+def iqr_outliers(df):
+    Q1 = df.quantile(0.25)
+    Q3 = df.quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    
+    # Filter outliers
+    outliers = df[(df < lower_bound) | (df > upper_bound)]
+    return outliers
+
 def detect_outliers(data,outliers_fraction=0.01):
     de = detect_ecod(data,outliers_fraction=0.01)
     da = detect_abod(data,outliers_fraction=0.01)
@@ -138,6 +149,7 @@ def detect_outliers(data,outliers_fraction=0.01):
     return fin_df
 
 def detect_Outliers(data,outliers_fraction=0.01):
+    dat = data 
     data = data.values.reshape(-1, 1)
     de = detect_ecod(data,outliers_fraction=0.01)
     da = detect_abod(data,outliers_fraction=0.01)
@@ -150,8 +162,8 @@ def detect_Outliers(data,outliers_fraction=0.01):
     dl = detect_lmdd(data,outliers_fraction=0.01)
     db = detect_dbscan(data)
     # dz = detect_zscore(data)
-    # di = detect_IQR(data)
-    fin_df = pd.DataFrame({'ECOD':de,'ABOD':da,'HBOS':dh,'KNN':dk,'LOF':dl,'MCD':dm,'OCSVM':do,'PCA':dp,'LMDD':dl,'DBSCAN':db})
+    # di = iqr_outliers(dat)
+    fin_df = pd.DataFrame({'ECOD':de,'ABOD':da,'HBOS':dh,'KNN':dk,'LOF':dl,'MCD':dm,'OCSVM':do,'PCA':dp,'LMDD':dl,'DBSCAN':db   })
     return fin_df
 
 def main():
