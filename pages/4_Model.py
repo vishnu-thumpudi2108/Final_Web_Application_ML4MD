@@ -35,13 +35,15 @@ def main():
                 predictions = make_predictions(data)
                 data['Predicted_Adaptabilty'] = predictions
                 st.write("Here is your final DataFrame")
-                data
+                st.dataframe(data,use_container_width=True)
+                st.toast("Hurrah! Predictions made successfully", icon="🎉")
                 st.stop()
             data = pd.read_csv(csv_path)
             st.success('Data loaded successfully')
             predictions = make_predictions(data)
             data['Predicted_Adaptabilty'] = predictions
             st.write("Here is your final DataFrame")
-            data
+            st.dataframe(data,use_container_width=True)
+            st.toast("Hurrah! Predictions made successfully", icon="🎉")
 if __name__ == '__main__':
     main()

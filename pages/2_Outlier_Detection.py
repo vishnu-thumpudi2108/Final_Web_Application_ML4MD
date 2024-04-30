@@ -191,14 +191,14 @@ def main():
                     st.success("Successfully loaded the CSV file and we are ready to detect outliers")
                     fitting_classifiers(number)  
                     fin_df = detect_outliers(df,number) 
-                    fin_df
+                    st.dataframe(fin_df,use_container_width=True)
                     st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
                     st.stop()
                 data_frame = pd.read_csv(csv_path)
                 st.success("Successfully loaded the CSV file and we are ready to detect outliers")
                 fitting_classifiers(number)  
                 fin_df = detect_outliers(data_frame,number) 
-                fin_df
+                st.dataframe(fin_df,use_container_width=True)
                 st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
 
             if f_b_f:
@@ -209,7 +209,7 @@ def main():
                         data = df[col]
                         fin_df = detect_Outliers(data,number)
                         st.write("Outliers from column",col)
-                        fin_df
+                        st.dataframe(fin_df,use_container_width=True)
                     st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
                     st.stop()
                 data_frame = pd.read_csv(csv_path)
@@ -218,8 +218,9 @@ def main():
                     data = df[col]
                     fin_df = detect_Outliers(data,number)
                     st.write("Outliers from column",col)
-                    fin_df
+                    st.dataframe(fin_df,use_container_width=True)
                 st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
                 st.stop()
+
 if __name__ == '__main__':
     main()
