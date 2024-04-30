@@ -210,6 +210,16 @@ def main():
                         fin_df = detect_Outliers(data,number)
                         st.write("Outliers from column",col)
                         fin_df
-
+                    st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
+                    st.stop()
+                data_frame = pd.read_csv(csv_path)
+                df = data_frame.iloc[:,1:]
+                for col in df.keys():
+                    data = df[col]
+                    fin_df = detect_Outliers(data,number)
+                    st.write("Outliers from column",col)
+                    fin_df
+                st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
+                st.stop()
 if __name__ == '__main__':
     main()

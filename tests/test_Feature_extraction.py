@@ -1,42 +1,74 @@
-import unittest
-from unittest.mock import patch, MagicMock
+import pytest
 import tempfile
 import pandas as pd
-import your_module  # replace with the actual name of your module
+from unittest import mock
+from your_module import main  # replace with the actual module name
 
-class TestFeatureExtraction(unittest.TestCase):
-    @patch('tempfile.NamedTemporaryFile')
-    @patch('your_module.md')
-    @patch('your_module.st')
-    @patch('your_module.pd')
-    @patch('your_module.compute_rmsd')
-    @patch('your_module.compute_rmsf')
-    @patch('your_module.compute_sasa')
-    @patch('your_module.compute_rog')
-    @patch('your_module.compute_h_bonds')
-    @patch('your_module.compute_native_contacts')
-    def test_feature_extraction(self, mock_nc, mock_hb, mock_rog, mock_sasa, mock_rmsf, mock_rmsd, mock_pd, mock_st, mock_md, mock_tempfile):
-        # Arrange
-        mock_tempfile.return_value.__enter__.return_value.name = 'tempfile'
-        mock_md.load.return_value = MagicMock(n_frames=10, n_atoms=20, n_residues=30)
-        mock_rmsd.return_value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        mock_rmsf.return_value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        mock_sasa.return_value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        mock_rog.return_value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+# Mocking Streamlit methods
+st = mock.MagicMock()
+modules = {
+    "streamlit": st,
+    "streamlit.set_page_config": st.set_page_config,
+    "streamlit.markdown": st.markdown,
+    "streamlit.divider": st.divider,
+    "streamlit.file_uploader": st.file_uploader,
+    "streamlit.number_input": st.number_input,
+    "streamlit.checkbox": st.checkbox,
+    "streamlit.button": st.button,
+    "streamlit.warning": st.warning,
+    "streamlit.success": st.success,
+    "streamlit.spinner": st.spinner,
+    "streamlit.write": st.write,
+    "streamlit.dataframe": st.dataframe,
+    "streamlit.table": st.table,
+    "streamlit.toast": st.toast,
+    "streamlit.error": st.error,
+}
 
-        # Act
-        your_module.your_function()  # replace with the actual name of your function
-
-        # Assert
-        mock_md.load.assert_called_once_with('tempfile', top='tempfile')
-        mock_st.success.assert_called_once_with("Successfully loaded the trajectory and we are ready to start analysis")
-        mock_pd.DataFrame.assert_called_once_with({'Frame': range(1, 11)})
-        mock_rmsd.assert_called_once()
-        mock_rmsf.assert_called_once()
-        mock_sasa.assert_called_once()
-        mock_rog.assert_called_once()
-        mock_hb.assert_called_once()
-        mock_nc.assert_called_once()
-
-if __name__ == '__main__':
-    unittest.main()
+@mock.patch.dict("sys.modules", modules)
+def test_main():
+    # Mocking the file uploaders
+    st.file_uploader.return_value = tempfile.NamedTemporaryFile(delete=False, suffix=".xtc")
+    
+    # Mocking the checkboxes
+    st.checkbox.return_value = True
+    
+    # Mocking the button
+    st.button.return_value = True
+    
+    # Call the main function
+    main()
+    
+    # Assert that the file uploader was called with the correct arguments
+    st.file_uploader.assert_any_call("Upload your Trajectory file", type=["xtc","trr","dcd"])
+    st.file_uploader.assert_any_call("Upload your PDB file", type=["pdb"])
+    
+    # Assert that the checkboxes were called with the correct arguments
+    st.checkbox.assert_any_call("Compute Root Mean Square Deviation")
+    st.checkbox.assert_any_call("Compute Root Mean Square Fluctuation")
+    st.checkbox.assert_any_call("Compute Solvent Accessible Surface Area")
+    st.checkbox.assert_any_call("Compute Radius of Gyration")
+    st.checkbox.assert_any_call("Compute Hydrogen Bonds")
+    st.checkbox.assert_any_call("Compute Native Contacts")
+    
+    # Assert that the button was called with the correct argument
+    st.button.assert_called_with("Process")
+    
+    # Assert that the warnings were displayed
+    st.warning.assert_any_call("Computing RMSF takes longer time than expected", icon="⚠️")
+    st.warning.assert_any_call("Computing SASA takes longer time than expected", icon="⚠️")
+    
+    # Assert that the success message was displayed
+    st.success.assert_called_with("Successfully Uploaded the trajectory and the PDB file")
+    
+    # Assert that the spinner was displayed
+    st.spinner.assert_called_with('Wait a while...')
+    
+    # Assert that the dataframe was displayed
+    st.dataframe.assert_called()
+    
+    # Assert that the table was displayed
+    st.table.assert_called()
+    
+    # Assert that the toast was displayed
+    st.toast.assert_called_with('Hooray! We have computed all your selected features', icon='🎉')

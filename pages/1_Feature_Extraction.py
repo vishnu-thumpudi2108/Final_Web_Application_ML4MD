@@ -11,7 +11,7 @@ from itertools import combinations
 from sklearn.preprocessing import StandardScaler
 
 def compute_rmsd(trajectory):
-    rmsds = md.rmsd(trajectory, trajectory, 1)
+    rmsds = md.rmsd(trajectory, trajectory, 0)
     st.success("Successfully computed rmsd")
     frames = np.arange(len(rmsds))  # Frame indices
     p = figure(
@@ -137,6 +137,7 @@ def main():
     st.divider()
     xtc_file = st.file_uploader("Upload your Trajectory file", type=["xtc","trr","dcd"])
     pdb_file = st.file_uploader("Upload your PDB file", type=["pdb"])
+    stride = st.number_input("Stride",min_value=1, step=1,placeholder="Type a number...")
     rmsd_box = st.checkbox("Compute Root Mean Square Deviation")
     rmsf_box = st.checkbox("Compute Root Mean Square Fluctuation")
     sasa_box = st.checkbox("Compute Solvent Accessible Surface Area")
@@ -153,7 +154,7 @@ def main():
 
     if button:
         if xtc_file and pdb_file:
-            st.success("Successfully uploaded the trajectory and the PDB file")
+            st.success("Successfully Uploaded the trajectory and the PDB file")
             xtc_ext = get_file_type(xtc_file.name)
             pdb_ext = get_file_type(pdb_file.name)
             if xtc_ext == ".xtc" and pdb_ext == ".pdb":
@@ -178,31 +179,33 @@ def main():
                     tmp_pdb.write(pdb_file.getvalue())
                     pdb_path = tmp_pdb.name
             with st.spinner('Wait a while...'):
-                trajectory = md.load(xtc_path,top=pdb_path)
-                st.success("Successfully loaded the trajectory and we are ready to start analysis")
-                st.write(f"Number of frames: {trajectory.n_frames}")
-                st.write(f"Number of atoms: {trajectory.n_atoms}")
-                st.write(f"Number of residues: {trajectory.n_residues}")
-            df = pd.DataFrame({'Frame': range(1, trajectory.n_frames+1)})
-            if rmsd_box:
-                rmsd = compute_rmsd(trajectory)
-                df['RMSD'] = rmsd
-            if rmsf_box:
-                rmsf = compute_rmsf(trajectory,trajectory.n_frames)
-                df['RMSF'] = rmsf
-            if sasa_box:
-                sasa = compute_sasa(trajectory) 
-                df['SASA'] = sasa
-            if rog_box:
-                rog = compute_rog(trajectory)
-                df['ROG'] = rog  
-            if h_bonds:
-                compute_h_bonds(trajectory)
-            if native_contacts:
-                compute_native_contacts(trajectory)
-        df 
-        st.write(df.iloc[:,1:].describe())
-        st.toast('Hooray! We have computed all your selected features', icon='🎉')
-
+                try : 
+                    trajectory = md.load(xtc_path,stride=stride,top=pdb_path)
+                    st.success("Successfully loaded the trajectory and we are ready to start analysis")
+                    st.write(f"Number of frames: {trajectory.n_frames}")
+                    st.write(f"Number of atoms: {trajectory.n_atoms}")
+                    st.write(f"Number of residues: {trajectory.n_residues}")
+                    df = pd.DataFrame({'Frame': range(1, trajectory.n_frames+1)})
+                    if rmsd_box:
+                        rmsd = compute_rmsd(trajectory)
+                        df['RMSD'] = rmsd
+                    if rmsf_box:
+                        rmsf = compute_rmsf(trajectory,trajectory.n_frames)
+                        df['RMSF'] = rmsf
+                    if sasa_box:
+                        sasa = compute_sasa(trajectory) 
+                        df['SASA'] = sasa
+                    if rog_box:
+                        rog = compute_rog(trajectory)
+                        df['ROG'] = rog  
+                    if h_bonds:
+                        compute_h_bonds(trajectory)
+                    if native_contacts:
+                        compute_native_contacts(trajectory)
+                    st.dataframe(df,use_container_width=True) 
+                    st.table(df.iloc[:,1:].describe())
+                    st.toast('Hooray! We have computed all your selected features', icon='🎉')
+                except Exception as e:
+                    st.error(e,icon="🚨")
 if __name__ == '__main__':
     main()
