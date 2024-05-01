@@ -186,23 +186,45 @@ def main():
                 csv_path = tmp_csv.name
             if g_o_d:
                 if first_col:
+                    try:
+                        data_frame = pd.read_csv(csv_path)
+                        df = data_frame.iloc[:,1:]
+                        st.success("Successfully loaded the CSV file and we are ready to detect outliers")
+                        fitting_classifiers(number)  
+                        fin_df = detect_outliers(df,number) 
+                        st.dataframe(fin_df,use_container_width=True)
+                        st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
+                        st.stop()
+                    except Exception as e:
+                        st.error(e,icon="🚨")
+                        st.stop()
+                try:
                     data_frame = pd.read_csv(csv_path)
-                    df = data_frame.iloc[:,1:]
                     st.success("Successfully loaded the CSV file and we are ready to detect outliers")
                     fitting_classifiers(number)  
-                    fin_df = detect_outliers(df,number) 
+                    fin_df = detect_outliers(data_frame,number) 
                     st.dataframe(fin_df,use_container_width=True)
                     st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
+                except Exception as e:
+                    st.error(e,icon="🚨")
                     st.stop()
-                data_frame = pd.read_csv(csv_path)
-                st.success("Successfully loaded the CSV file and we are ready to detect outliers")
-                fitting_classifiers(number)  
-                fin_df = detect_outliers(data_frame,number) 
-                st.dataframe(fin_df,use_container_width=True)
-                st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
 
             if f_b_f:
                 if first_col:
+                    try: 
+                        data_frame = pd.read_csv(csv_path)
+                        df = data_frame.iloc[:,1:]
+                        for col in df.keys():
+                            data = df[col]
+                            fin_df = detect_Outliers(data,number)
+                            st.write("Outliers from column",col)
+                            st.dataframe(fin_df,use_container_width=True)
+                        st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
+                        st.stop()
+                    except Exception as e:
+                        st.error(e,icon="🚨")
+                        st.stop()
+                try:
                     data_frame = pd.read_csv(csv_path)
                     df = data_frame.iloc[:,1:]
                     for col in df.keys():
@@ -212,15 +234,9 @@ def main():
                         st.dataframe(fin_df,use_container_width=True)
                     st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
                     st.stop()
-                data_frame = pd.read_csv(csv_path)
-                df = data_frame.iloc[:,1:]
-                for col in df.keys():
-                    data = df[col]
-                    fin_df = detect_Outliers(data,number)
-                    st.write("Outliers from column",col)
-                    st.dataframe(fin_df,use_container_width=True)
-                st.toast("Hooray! We have detected outliers successfully', icon='🎉'")
-                st.stop()
+                except Exception as e:
+                    st.error(e,icon="🚨")
+                    st.stop()
 
 if __name__ == '__main__':
     main()

@@ -21,7 +21,28 @@ def main():
                 tmp_csv.write(csv_file.getvalue())
                 csv_path = tmp_csv.name
             if first_column:
-                data = np.genfromtxt(csv_path, delimiter=',',skip_header=1,usecols=range(1, 13))
+                try:
+                    data = np.genfromtxt(csv_path, delimiter=',',skip_header=1,usecols=range(1, 13))
+                    row_sums = np.sum(data,axis = 1)
+                    count = 0
+                    frames_list = []
+
+                    for i,row_sums in enumerate(row_sums):
+                        if(row_sums >= consensus_threshold):
+                            count+=1
+                            frames_list.append(i)
+                    if frames_list == []:
+                        st.write("No Outliers detected in the trajectory")
+                        st.stop()
+                    else:
+                        st.write(f"Number of frames that are outliers in the trajectory are : {count}")
+                        st.write(f"Frames that are outliers in the trajectory are : {frames_list}")
+                    st.stop()
+                except Exception as e:
+                    st.error(e,icon="🚨")
+                    st.stop()
+            try:
+                data = np.genfromtxt(csv_path, delimiter=',',skip_header=1)
                 row_sums = np.sum(data,axis = 1)
                 count = 0
                 frames_list = []
@@ -37,22 +58,9 @@ def main():
                     st.write(f"Number of frames that are outliers in the trajectory are : {count}")
                     st.write(f"Frames that are outliers in the trajectory are : {frames_list}")
                 st.stop()
-            
-            data = np.genfromtxt(csv_path, delimiter=',',skip_header=1)
-            row_sums = np.sum(data,axis = 1)
-            count = 0
-            frames_list = []
-
-            for i,row_sums in enumerate(row_sums):
-                if(row_sums >= consensus_threshold):
-                    count+=1
-                    frames_list.append(i)
-            if frames_list == []:
-                st.write("No Outliers detected in the trajectory")
+            except Exception as e:
+                st.error(e,icon="🚨")
                 st.stop()
-            else:
-                st.write(f"Number of frames that are outliers in the trajectory are : {count}")
-                st.write(f"Frames that are outliers in the trajectory are : {frames_list}")
-            st.stop()
+            
 if __name__ == '__main__':
     main()

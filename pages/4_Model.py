@@ -29,21 +29,30 @@ def main():
                 tmp_csv.write(csv_file.getvalue())
                 csv_path = tmp_csv.name
             if first_column:
+                try:
+                    data = pd.read_csv(csv_path)
+                    st.success('Data loaded successfully')
+                    data = data.iloc[:, 1:]
+                    predictions = make_predictions(data)
+                    data['Predicted_Adaptabilty'] = predictions
+                    st.write("Here is your final DataFrame")
+                    st.dataframe(data,use_container_width=True)
+                    st.toast("Hurrah! Predictions made successfully", icon="🎉")
+                    st.stop()
+                except Exception as e:
+                    st.error(e,icon="🚨")
+                    st.stop()
+            try:
                 data = pd.read_csv(csv_path)
                 st.success('Data loaded successfully')
-                data = data.iloc[:, 1:]
                 predictions = make_predictions(data)
                 data['Predicted_Adaptabilty'] = predictions
                 st.write("Here is your final DataFrame")
                 st.dataframe(data,use_container_width=True)
                 st.toast("Hurrah! Predictions made successfully", icon="🎉")
+            except Exception as e:
+                st.error(e,icon="🚨")
                 st.stop()
-            data = pd.read_csv(csv_path)
-            st.success('Data loaded successfully')
-            predictions = make_predictions(data)
-            data['Predicted_Adaptabilty'] = predictions
-            st.write("Here is your final DataFrame")
-            st.dataframe(data,use_container_width=True)
-            st.toast("Hurrah! Predictions made successfully", icon="🎉")
+
 if __name__ == '__main__':
     main()
