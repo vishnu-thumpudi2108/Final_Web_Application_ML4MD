@@ -11,67 +11,82 @@ from itertools import combinations
 from sklearn.preprocessing import StandardScaler
 
 def compute_rmsd(trajectory):
-    rmsds = md.rmsd(trajectory, trajectory, 0)
-    st.success("Successfully computed rmsd")
-    frames = np.arange(len(rmsds))  # Frame indices
-    p = figure(
-    title='Frame vs RMSD',
-    x_axis_label='Frames',
-    y_axis_label='RMSD')
-    p.line(frames,rmsds, legend_label='RMSD ', line_width=2)
-    st.bokeh_chart(p, use_container_width=True)
-    return rmsds
+    try: 
+        rmsds = md.rmsd(trajectory, trajectory, 0)
+        st.success("Successfully computed rmsd")
+        frames = np.arange(len(rmsds))  # Frame indices
+        p = figure(
+        title='Frame vs RMSD',
+        x_axis_label='Frames',
+        y_axis_label='RMSD')
+        p.line(frames,rmsds, legend_label='RMSD ', line_width=2)
+        st.bokeh_chart(p, use_container_width=True)
+        return rmsds
+    except Exception as e:
+        st.error(e,icon="🚨")
 
 def compute_rmsf(trajectory,n_frames):
-    rmsf = []
-    for i in range(n_frames):
-        rms = md.rmsf(trajectory, trajectory, i)
-        mean_rms = np.mean(rms)
-        std_rms = np.std(rms)
-        fin_rms = mean_rms + std_rms
-        rmsf.append(fin_rms)
-    frame_numbers = np.arange(1, len(rmsf) + 1)
-    p = figure(
-    title='Frame vs RMSF',
-    x_axis_label='Frames',
-    y_axis_label='RMSF')
-    p.line(frame_numbers,rmsf, legend_label='RMSF', line_width=2)
-    st.bokeh_chart(p, use_container_width=True)
-    return rmsf
+    try:
+        rmsf = []
+        for i in range(n_frames):
+            rms = md.rmsf(trajectory, trajectory, i)
+            mean_rms = np.mean(rms)
+            std_rms = np.std(rms)
+            fin_rms = mean_rms + std_rms
+            rmsf.append(fin_rms)
+        frame_numbers = np.arange(1, len(rmsf) + 1)
+        p = figure(
+        title='Frame vs RMSF',
+        x_axis_label='Frames',
+        y_axis_label='RMSF')
+        p.line(frame_numbers,rmsf, legend_label='RMSF', line_width=2)
+        st.bokeh_chart(p, use_container_width=True)
+        return rmsf
+    except Exception as e:
+        st.error(e,icon="🚨")
 
 def compute_sasa(trajectory):
-    sasa = md.shrake_rupley(trajectory)
-    st.success("Successfully computed SaSa")
-    total_sasa = sasa.sum(axis=1)
-    p = figure(
-    title='Time vs SaSa',
-    x_axis_label='Time [ps]',
-    y_axis_label='Total SASA (nm)^2')
-    p.line(trajectory.time,total_sasa, legend_label='SaSa', line_width=2)
-    st.bokeh_chart(p, use_container_width=True)
-    return sasa
+    try:
+        sasa = md.shrake_rupley(trajectory)
+        st.success("Successfully computed SaSa")
+        total_sasa = sasa.sum(axis=1)
+        p = figure(
+        title='Time vs SaSa',
+        x_axis_label='Time [ps]',
+        y_axis_label='Total SASA (nm)^2')
+        p.line(trajectory.time,total_sasa, legend_label='SaSa', line_width=2)
+        st.bokeh_chart(p, use_container_width=True)
+        return sasa
+    except Exception as e:
+        st.error(e,icon="🚨")
 
 def compute_rog(trajectory):
-    rog = md.compute_rg(trajectory, masses=None)
-    st.success("Successfully computed Radius of Gyration")
-    frames = np.arange(len(rog))
-    p = figure(
-    title='Frame vs RoG',
-    x_axis_label='Frames',
-    y_axis_label='RoG')
-    p.line(frames,rog, legend_label='RoG', line_width=2)
-    st.bokeh_chart(p, use_container_width=True)
-    return rog
+    try:
+        rog = md.compute_rg(trajectory, masses=None)
+        st.success("Successfully computed Radius of Gyration")
+        frames = np.arange(len(rog))
+        p = figure(
+        title='Frame vs RoG',
+        x_axis_label='Frames',
+        y_axis_label='RoG')
+        p.line(frames,rog, legend_label='RoG', line_width=2)
+        st.bokeh_chart(p, use_container_width=True)
+        return rog
+    except Exception as e:
+        st.error(e,icon="🚨")
 
 def compute_h_bonds(trajectory):
-    h_bonds = md.baker_hubbard(trajectory)
-    st.success("Successfully computed Hydrogen Bonds")
-    st.write("Total number of hydrogen bonds formed over the simulation : %d" % len(h_bonds))
-    st.text("Here below you can find the residues which contain hydrogen bonds: ")
-    label = lambda hbond : '%s -- %s' % (trajectory.topology.atom(hbond[0]), trajectory.topology.atom(hbond[2]))
-    for hbond in h_bonds:
-        st.write(label(hbond))
-
+    try: 
+        h_bonds = md.baker_hubbard(trajectory)
+        st.success("Successfully computed Hydrogen Bonds")
+        st.write("Total number of hydrogen bonds formed over the simulation : %d" % len(h_bonds))
+        st.text("Here below you can find the residues which contain hydrogen bonds: ")
+        label = lambda hbond : '%s -- %s' % (trajectory.topology.atom(hbond[0]), trajectory.topology.atom(hbond[2]))
+        for hbond in h_bonds:
+            st.write(label(hbond))
+    except Exception as e:
+        st.error(e,icon="🚨")
+      
 def best_hummer_q(traj, native):
     """Compute the fraction of native contacts according the definition from
     Best, Hummer and Eaton [1]
@@ -123,9 +138,12 @@ def best_hummer_q(traj, native):
     return q ,native_contacts
 
 def compute_native_contacts(trajectory):
-    q, native = best_hummer_q(trajectory, trajectory[0])
-    st.success("Successfully computed fraction of native contacts that determine protein folding")
-    st.write("Fraction of native contacts determing native folding mechanism in the trajectory are : %d" % len(native))
+    try:
+        q, native = best_hummer_q(trajectory, trajectory[0])
+        st.success("Successfully computed fraction of native contacts that determine protein folding")
+        st.write("Fraction of native contacts determing native folding mechanism in the trajectory are : %d" % len(native))
+    except Exception as e:
+        st.error(e,icon="🚨")
 
 def get_file_type(filename):
     _,file_extension = os.path.splitext(filename)
@@ -207,5 +225,6 @@ def main():
                     st.toast('Hooray! We have computed all your selected features', icon='🎉')
                 except Exception as e:
                     st.error(e,icon="🚨")
+                
 if __name__ == '__main__':
     main()
