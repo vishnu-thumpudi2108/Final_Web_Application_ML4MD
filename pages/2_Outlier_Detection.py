@@ -131,6 +131,7 @@ def iqr_outliers(df):
     outliers = df[(df < lower_bound) | (df > upper_bound)]
     return outliers
 
+# Function to detect Global Outliers
 def detect_outliers(data,outliers_fraction=0.01):
     de = detect_ecod(data,outliers_fraction=0.01)
     da = detect_abod(data,outliers_fraction=0.01)
@@ -148,6 +149,7 @@ def detect_outliers(data,outliers_fraction=0.01):
     st.success("Successfully detected outliers")
     return fin_df
 
+# Function to detect Outliers Feature by Feature
 def detect_Outliers(data,outliers_fraction=0.01):
     dat = data 
     data = data.values.reshape(-1, 1)
@@ -166,6 +168,7 @@ def detect_Outliers(data,outliers_fraction=0.01):
     fin_df = pd.DataFrame({'ECOD':de,'ABOD':da,'HBOS':dh,'KNN':dk,'LOF':dl,'MCD':dm,'OCSVM':do,'PCA':dp,'LMDD':dl,'DBSCAN':db   })
     return fin_df
 
+# Main Function to detect Outliers
 def main():
     st.set_page_config(page_title="Outlier Detection Tool ",page_icon="chart_with_upwards_trend",layout="wide")
     st.markdown("# Welcome To Our Outlier Detection web page🎈")
@@ -184,7 +187,7 @@ def main():
             with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_csv:
                 tmp_csv.write(csv_file.getvalue())
                 csv_path = tmp_csv.name
-            if g_o_d:
+            if g_o_d: # g_o_d represents global outlier detection
                 if first_col:
                     try:
                         data_frame = pd.read_csv(csv_path)
@@ -209,7 +212,7 @@ def main():
                     st.error(e,icon="🚨")
                     st.stop()
 
-            if f_b_f:
+            if f_b_f: #f_b_f represents feature by feature
                 if first_col:
                     try: 
                         data_frame = pd.read_csv(csv_path)
@@ -238,5 +241,6 @@ def main():
                     st.error(e,icon="🚨")
                     st.stop()
 
+#Driver Program
 if __name__ == '__main__':
     main()

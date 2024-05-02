@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import tempfile
 
-
+# Main Function
 def main():
     st.set_page_config(page_title="Consensus Outlier Detection", page_icon=":shark:", layout="wide")
     st.title("Consensus Outlier Detection")
@@ -61,6 +61,7 @@ def main():
             except Exception as e:
                 st.error(e,icon="🚨")
                 st.stop()
-            
+
+#Driver Program         
 if __name__ == '__main__':
     main()

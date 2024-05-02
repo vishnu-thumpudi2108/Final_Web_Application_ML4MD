@@ -7,13 +7,13 @@ from sklearn.preprocessing import StandardScaler
 
 def make_predictions(data):
     with st.spinner("Predicting...."):
-        loaded_model = load_model('model1.h5')
-        st.success('Model loaded successfully')
+        loaded_model = load_model('model1.h5') #Load the Model
+        st.success('Model loaded successfully') # Displays Success message
         scaler = StandardScaler()
-        test_x = scaler.fit_transform(data)
-        predictions = loaded_model.predict(test_x)
-    st.success('Predictions made successfully')
-    return predictions
+        test_x = scaler.fit_transform(data) # Scaling the data
+        predictions = loaded_model.predict(test_x) # Making Predictions
+    st.success('Predictions made successfully') # Displays Success message
+    return predictions # Returns predictions
 
 def main():
     st.set_page_config(page_title='Model', page_icon=':bar_chart:', layout='wide')

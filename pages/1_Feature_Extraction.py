@@ -10,6 +10,7 @@ from bokeh.plotting import figure
 from itertools import combinations
 from sklearn.preprocessing import StandardScaler
 
+# Function to compute Root Mean Square Deviation (RMSD)
 def compute_rmsd(trajectory):
     try: 
         rmsds = md.rmsd(trajectory, trajectory, 0)
@@ -25,6 +26,7 @@ def compute_rmsd(trajectory):
     except Exception as e:
         st.error(e,icon="🚨")
 
+# Function to compute Root Mean Square Fluctuation (RMSF)
 def compute_rmsf(trajectory,n_frames):
     try:
         rmsf = []
@@ -45,6 +47,7 @@ def compute_rmsf(trajectory,n_frames):
     except Exception as e:
         st.error(e,icon="🚨")
 
+# Function to calculate Solvent Accessible Surface Area (SASA)
 def compute_sasa(trajectory):
     try:
         sasa = md.shrake_rupley(trajectory)
@@ -60,6 +63,7 @@ def compute_sasa(trajectory):
     except Exception as e:
         st.error(e,icon="🚨")
 
+# Function to calculate Radius of Gyration (RoG)
 def compute_rog(trajectory):
     try:
         rog = md.compute_rg(trajectory, masses=None)
@@ -75,6 +79,7 @@ def compute_rog(trajectory):
     except Exception as e:
         st.error(e,icon="🚨")
 
+# Function to calculate Hydrogen Bonds
 def compute_h_bonds(trajectory):
     try: 
         h_bonds = md.baker_hubbard(trajectory)
@@ -86,7 +91,8 @@ def compute_h_bonds(trajectory):
             st.write(label(hbond))
     except Exception as e:
         st.error(e,icon="🚨")
-      
+    
+#Utility function to compute Native Contacts
 def best_hummer_q(traj, native):
     """Compute the fraction of native contacts according the definition from
     Best, Hummer and Eaton [1]
@@ -137,6 +143,7 @@ def best_hummer_q(traj, native):
     q = np.mean(1.0 / (1 + np.exp(BETA_CONST * (r - LAMBDA_CONST * r0))), axis=1)
     return q ,native_contacts
 
+# Function to calculate Native Contacts  
 def compute_native_contacts(trajectory):
     try:
         q, native = best_hummer_q(trajectory, trajectory[0])
@@ -145,12 +152,14 @@ def compute_native_contacts(trajectory):
     except Exception as e:
         st.error(e,icon="🚨")
 
+#Function to know the File Type Provided by the User
 def get_file_type(filename):
     _,file_extension = os.path.splitext(filename)
     return file_extension.lower()
 
+# Main Function to calculate the features
 def main():
-    st.set_page_config(page_title="Tool for Analysis of MD Data",page_icon="chart_with_upwards_trend",layout="wide")
+    st.set_page_config(page_title="Tool for Analysis of MD Data",page_icon="chart_with_upwards_trend",layout="wide") #Sets Page Configuration 
     st.markdown("# Welcome To Our Feature Extraction web page🎈")
     st.divider()
     xtc_file = st.file_uploader("Upload your Trajectory file", type=["xtc","trr","dcd"])
@@ -165,7 +174,7 @@ def main():
     button = st.button("Process")
     
     if rmsf_box:
-        st.warning("Computing RMSF takes longer time than expected", icon="⚠️")
+        st.warning("Computing RMSF takes longer time than expected", icon="⚠️") #Warns the User
 
     if sasa_box:
         st.warning("Computing SASA takes longer time than expected", icon="⚠️")
@@ -175,6 +184,7 @@ def main():
             st.success("Successfully Uploaded the trajectory and the PDB file")
             xtc_ext = get_file_type(xtc_file.name)
             pdb_ext = get_file_type(pdb_file.name)
+            # Storing the files temperorily in the users system
             if xtc_ext == ".xtc" and pdb_ext == ".pdb":
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".xtc") as tmp_xtc:
                     tmp_xtc.write(xtc_file.getvalue())
@@ -225,6 +235,7 @@ def main():
                     st.toast('Hooray! We have computed all your selected features', icon='🎉')
                 except Exception as e:
                     st.error(e,icon="🚨")
-                
+
+#Driver Program            
 if __name__ == '__main__':
     main()
