@@ -17,7 +17,16 @@ def make_predictions(data):
 
 def main():
     st.set_page_config(page_title='Model', page_icon=':bar_chart:', layout='wide')
-    st.header('Model')
+    st.header("This is the Model Page")
+    st.divider()
+    st.header("Want to know more about Adapatability")
+    lst = ["It refers to a measure of the per-atom conformational plasticity of the protein.",
+           "It is a metric used to assess how individual atoms within a protein structure are likely to adapt or change their positions in response to ligand binding during molecular dynamics simulations.",
+           "The adaptability model aims to identify elements of the biomolecule structure that are flexible or rigid, providing insights into the dynamic behavior of the protein in the presence of ligands."]
+    s = ""
+    for i in lst:
+        s += "- " + i + "\n"
+    st.markdown(s)
     st.divider()
     csv_file = st.file_uploader('Upload CSV file', type=['csv'])
     first_column = st.checkbox('Ignore First Column')
@@ -37,6 +46,9 @@ def main():
                     data['Predicted_Adaptabilty'] = predictions
                     st.write("Here is your final DataFrame")
                     st.dataframe(data,use_container_width=True)
+                    st.text("If Adaptability == 0, indicates a neutral or average level of Adaptability (neither the molecule is highly flexible nor rigid")
+                    st.text("If Adaptability ~= 1, indicates a high flexibility and adaptability of the atoms and also indicating significant conformational changes")
+                    st.text("If Adaptability ~= -1, indicates a high rigidity and low adaptability of the atoms and also indicating minimum or no significant conformational changes")
                     st.toast("Hurrah! Predictions made successfully", icon="🎉")
                     st.stop()
                 except Exception as e:
@@ -49,6 +61,9 @@ def main():
                 data['Predicted_Adaptabilty'] = predictions
                 st.write("Here is your final DataFrame")
                 st.dataframe(data,use_container_width=True)
+                st.text("If Adaptability == 0, indicates a neutral or average level of Adaptability (neither the molecule is highly flexible nor rigid")
+                st.text("If Adaptability ~= 1, indicates a high flexibility and adaptability of the atoms and also indicating significant conformational changes")
+                st.text("If Adaptability ~= -1, indicates a high rigidity and low adaptability of the atoms and also indicating minimum or no significant conformational changes")    
                 st.toast("Hurrah! Predictions made successfully", icon="🎉")
             except Exception as e:
                 st.error(e,icon="🚨")
