@@ -16,7 +16,7 @@ def main():
     st.header("Want to know more about Machine learning?")
     lst = ["Its a branch of Artificial Intelligence that enables computers to “self-learn” from training data and improve over time, without being explicitly programmed.",
            "The ML Algorithms are having ability to detect patterns in data and used to learn from them in order to make predictions.",
-           "Eg : Regression, Random forest Classifiers"]
+           "Eg : Regression, Random forest Classifier"]
     s = ""
     for i in lst:
         s += "- " + i + "\n"
