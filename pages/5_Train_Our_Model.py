@@ -20,20 +20,47 @@ def train_test(f_data,o_data,test_data_size):
 
 def build_reg_model(data):
     model_r = Sequential()
-    model_r.add(Dense(128, input_dim=data.shape[1], activation='relu'))
-    model_r.add(Dense(64,activation='relu'))
+    model_r.add(Dense(1028, input_dim=data.shape[1], activation='relu'))
+    model_r.add(Dense(512,activation='relu'))
+    model_r.add(Dropout(0.2))
+    model_r.add(Dense(512,activation='relu'))
+    model_r.add(Dense(256,activation='relu'))
+    model_r.add(Dense(256,activation='relu'))
+    model_r.add(Dropout(0.2))
+    model_r.add(Dense(128,activation='relu'))
+    model_r.add(Dense(128,activation='relu'))
     model_r.add(Dense(64, activation='relu'))
+    model_r.add(Dropout(0.2))
+    model_r.add(Dense(128,activation='relu'))
+    model_r.add(Dense(128,activation='relu'))
+    model_r.add(Dense(64, activation='relu'))
+    model_r.add(Dropout(0.2))
+    model_r.add(Dense(64,activation='relu'))
+    model_r.add(Dense(32,activation='relu'))
     model_r.add(Dense(1, activation='relu'))
     return model_r
 
 def build_class_model(data):
     model_c = Sequential()
     model_c.add(Dense(128, input_dim=data.shape[1], activation='relu'))
+    model_c.add(Dense(512,activation='relu'))
+    model_c.add(Dropout(0.2))
+    model_c.add(Dense(512,activation='relu'))
+    model_c.add(Dense(256,activation='relu'))
+    model_c.add(Dense(256,activation='relu'))
+    model_c.add(Dropout(0.2))
+    model_c.add(Dense(128,activation='relu'))
+    model_c.add(Dense(128,activation='relu'))
+    model_c.add(Dense(64, activation='relu'))
+    model_c.add(Dropout(0.2))
+    model_c.add(Dense(64,activation='relu'))
+    model_c.add(Dense(32,activation='relu'))
+    model_c.add(Dense(64, activation='relu'))
+    model_c.add(Dropout(0.2))
     model_c.add(Dense(64,activation='relu'))
     model_c.add(Dense(64, activation='relu'))
     model_c.add(Dense(1, activation='sigmoid'))
     return model_c
-
 
 def analyze_csv(data):
     is_numeric = data.iloc[:,-1].astype(str).str.isnumeric().all()
@@ -50,13 +77,15 @@ def main():
     st.divider()
     features = st.file_uploader("Upload the csv file which consists of Features", type=['csv'])
     outcome_vector = st.file_uploader("Upload the csv file which consists of Outcome Vector", type=['csv'])
-    train_data_size = st.number_input("Train Data Split", min_value=0.1, max_value=0.9, step=0.1,placeholder="Type a number...")    
-    test_data_size = st.number_input("Test Data Split", min_value=0.1, max_value=0.9, step=0.1,placeholder="Type a number...")
-    validation_data = st.number_input("Validation Data Split", min_value=0.0,max_value=0.9, step=0.1,placeholder="Type a number...")
+    train_data_size = st.number_input("Train Data Split", min_value=0.1, max_value=0.9, step=0.01,placeholder="Type a number...")    
+    test_data_size = st.number_input("Test Data Split", min_value=0.1, max_value=0.9, step=0.01,placeholder="Type a number...")
+    validation_data = st.number_input("Validation Data Split", min_value=0.0,max_value=0.9, step=0.01,placeholder="Type a number...")
     epochs = st.number_input("Number of Epochs", min_value=1, step=1,placeholder="Type a number...")
     if (train_data_size + test_data_size + validation_data == 1):
         button = st.button("Upload")
     else:
+        total = train_data_size + test_data_size + validation_data 
+        st.write(total)
         st.stop()
     if button:
         if features and outcome_vector:
