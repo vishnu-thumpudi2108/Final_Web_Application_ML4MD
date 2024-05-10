@@ -14,7 +14,7 @@ from sklearn.preprocessing import StandardScaler
 def compute_rmsd(trajectory):
     try: 
         rmsds = md.rmsd(trajectory, trajectory, 0)
-        st.success("Successfully computed rmsd")
+        st.success("Successfully computed Root Mean Square Deviation")
         frames = np.arange(len(rmsds))  # Frame indices
         p = figure(
         title='Frame vs RMSD',
@@ -43,6 +43,7 @@ def compute_rmsf(trajectory,n_frames):
         y_axis_label='RMSF')
         p.line(frame_numbers,rmsf, legend_label='RMSF', line_width=2)
         st.bokeh_chart(p, use_container_width=True)
+        st.success("Successfully computed Root Mean Square Fluctuation")
         return rmsf
     except Exception as e:
         st.error(e,icon="🚨")
@@ -60,6 +61,7 @@ def compute_sasa(trajectory):
         p.line(trajectory.time,total_sasa, legend_label='SaSa', line_width=2)
         st.bokeh_chart(p, use_container_width=True)
         t_sasa = sasa.sum(axis=1)
+        st.success("Successfully computed Solvent Accessible Surface Area")
         return t_sasa
     except Exception as e:
         st.error(e,icon="🚨")

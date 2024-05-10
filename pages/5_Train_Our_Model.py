@@ -115,7 +115,7 @@ def main():
                         st.write("Mean Squared Error: ",mse)
                         st.write("Mean Absolute Error: ",mae)
                         download_model(model)
-                        st.stop()
+                    st.stop()
                 else:
                     st.info("The Problem is a Binary Classification Problem",icon="ℹ️")
                     with st.spinner("We Started Building the Model ...."):
@@ -148,7 +148,7 @@ def main():
                         st.write("Test Loss: ",test_loss)
                         st.write("Test Accuracy: ",test_accuracy)
                         #download_model(model)
-                        st.stop()
+                    st.stop()
             else:
                 st.warning("Please Upload the correct outcome Vector File with only 1 column",icon="⚠️")
                 st.stop()
