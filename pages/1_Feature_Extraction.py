@@ -59,7 +59,8 @@ def compute_sasa(trajectory):
         y_axis_label='Total SASA (nm)^2')
         p.line(trajectory.time,total_sasa, legend_label='SaSa', line_width=2)
         st.bokeh_chart(p, use_container_width=True)
-        return sasa
+        t_sasa = sasa.sum(axis=1)
+        return t_sasa
     except Exception as e:
         st.error(e,icon="🚨")
 
@@ -87,8 +88,11 @@ def compute_h_bonds(trajectory):
         st.write("Total number of hydrogen bonds formed over the simulation : %d" % len(h_bonds))
         st.text("Here below you can find the residues which contain hydrogen bonds: ")
         label = lambda hbond : '%s -- %s' % (trajectory.topology.atom(hbond[0]), trajectory.topology.atom(hbond[2]))
+        lst = [] 
         for hbond in h_bonds:
-            st.write(label(hbond))
+            lst.append(label(hbond))
+        df = pd.DataFrame(lst,columns=["Hydrogen Bonds"])
+        st.dataframe(df,use_container_width=True)
     except Exception as e:
         st.error(e,icon="🚨")
     

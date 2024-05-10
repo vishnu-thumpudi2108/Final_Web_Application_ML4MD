@@ -31,8 +31,6 @@ def main():
         s += "- " + i + "\n"
     st.markdown(s)
     st.divider()
-    
-
 
 #The topology file defines the molecular structure of the system under study. This includes details such as atom types, atomic charges, bond connectivity, and possibly parameters for non-bonded interactions like van der Waals forces and electrostatic interactions.
 if __name__ == '__main__':

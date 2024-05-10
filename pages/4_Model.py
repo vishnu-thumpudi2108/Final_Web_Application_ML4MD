@@ -46,9 +46,9 @@ def main():
                     data['Predicted_Adaptabilty'] = predictions
                     st.write("Here is your final DataFrame")
                     st.dataframe(data,use_container_width=True)
-                    st.text("If Adaptability == 0, indicates a neutral or average level of Adaptability (neither the molecule is highly flexible nor rigid")
-                    st.text("If Adaptability ~= 1, indicates a high flexibility and adaptability of the atoms and also indicating significant conformational changes")
-                    st.text("If Adaptability ~= -1, indicates a high rigidity and low adaptability of the atoms and also indicating minimum or no significant conformational changes")
+                    st.text("- If Adaptability == 0, indicates a neutral or average level of Adaptability (neither the molecule is highly flexible nor rigid")
+                    st.text("- If Adaptability ~= 1, indicates a high flexibility and adaptability of the atoms and also indicating significant conformational changes")
+                    st.text("- If Adaptability ~= -1, indicates a high rigidity and low adaptability of the atoms and also indicating minimum or no significant conformational changes")
                     st.toast("Hurrah! Predictions made successfully", icon="🎉")
                     st.stop()
                 except Exception as e:

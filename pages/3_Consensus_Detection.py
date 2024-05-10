@@ -39,7 +39,7 @@ def main():
                         st.write(f"Frames that are outliers in the trajectory are : {frames_list}")
                     st.stop()
                 except Exception as e:
-                    st.error(e,icon="🚨")
+                    st.warning("Some error encountered",icon="🚨")
                     st.stop()
             try:
                 data = np.genfromtxt(csv_path, delimiter=',',skip_header=1)
