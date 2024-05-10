@@ -147,7 +147,7 @@ def main():
                         test_loss, test_accuracy = model.evaluate(X_test,Y_test)
                         st.write("Test Loss: ",test_loss)
                         st.write("Test Accuracy: ",test_accuracy)
-                        #download_model(model)
+                        download_model(model)
                     st.stop()
             else:
                 st.warning("Please Upload the correct outcome Vector File with only 1 column",icon="⚠️")
